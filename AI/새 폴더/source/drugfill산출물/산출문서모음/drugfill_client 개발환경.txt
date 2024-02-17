@@ -1,0 +1,3 @@
+앱 : Android / Java / kotlin
+관리화면 : React / Node
+API : Java / Spring / Tomcat

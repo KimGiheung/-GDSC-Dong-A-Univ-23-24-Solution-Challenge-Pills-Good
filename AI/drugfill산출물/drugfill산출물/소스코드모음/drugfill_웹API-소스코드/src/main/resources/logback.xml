@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="3 seconds">
+
+    <!-- 변수 지정 -->
+    <property name="LOG_DIR" value="/${catalina.home}/logs"/>
+    <property name="LOG_PATH_NAME" value="${LOG_DIR}/webapi.log"/>
+    <property name="UPLOAD_IMAGE_LOG" value="${LOG_DIR}/upload_image.log"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH_NAME}</file>
+        <append>true</append>
+        <encoder>
+            <Pattern>[%d{YYYY-MM-dd HH:mm:ss}] [%-5p] [%F:%L] %m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>[%d{YYYY-MM-dd HH:mm:ss}] [%-5p] [%F:%L] %m%n</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="FILE_IMAGE_UPLOAD" class="ch.qos.logback.core.FileAppender">
+        <file>${UPLOAD_IMAGE_LOG}</file>
+        <append>true</append>
+        <encoder>
+            <Pattern>[%d{YYYY-MM-dd HH:mm:ss}] [%-5p] [%F:%L] %m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="OFF">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="com.sgasol" level="DEBUG">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="com.sgasol.webapi.controller.MainController" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_IMAGE_UPLOAD"/>
+    </logger>
+
+    <logger name="com.zaxxer.hikari" level="OFF"></logger>
+
+<!--    <root level="ERROR">-->
+<!--        <appender-ref ref="FILE"/>-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--    </root>-->
+</configuration>
