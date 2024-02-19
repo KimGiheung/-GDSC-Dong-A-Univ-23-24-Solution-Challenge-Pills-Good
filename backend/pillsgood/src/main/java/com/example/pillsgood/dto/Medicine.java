@@ -20,7 +20,7 @@ public class Medicine {
     private String chart;
     private String storageMethod;
     private String validTerm;
-//    private List<String> effect;
-//    private List<String> usage;
-//    private List<String> underlyingDisease;
+    private List<String> effect;
+    private List<String> usage;
+    private List<String> underlyingDisease;
 }

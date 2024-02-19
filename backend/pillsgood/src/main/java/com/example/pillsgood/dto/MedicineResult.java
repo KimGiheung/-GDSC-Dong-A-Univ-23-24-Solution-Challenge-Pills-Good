@@ -8,8 +8,9 @@ import java.util.Set;
 
 @Getter @Setter
 public class MedicineResult {
-    private String interactionResult;
     private boolean taking;
+    private String interactionResult;
+    private String constitutionResult;
     private Set<String> tabooCause;
 
     private List<Medicine> medicines;

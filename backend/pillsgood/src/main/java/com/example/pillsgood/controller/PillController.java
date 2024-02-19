@@ -19,10 +19,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -78,6 +75,7 @@ public class PillController {
 
         return new Result(medicineResult);
     }
+
     @PostMapping("/v2/patient")
     public Result createPatient2(@RequestBody Patient patient) throws IOException {
 
@@ -85,6 +83,24 @@ public class PillController {
         MedicineResult medicineResult = drugService.returnInteractions(patient.getPills());
 
         medicineResult.setTaking(taking);
+
+        return new Result(medicineResult);
+    }
+
+    @CrossOrigin
+    @PostMapping("/v3/patient")
+    public Result createPatient3(@RequestBody Patient patient) throws IOException {
+
+        String constitutionResult = drugService.returnDisease2(patient.getPills(), patient.getConstitution());
+        MedicineResult medicineResult = drugService.returnInteractions(patient.getPills());
+
+        medicineResult.setConstitutionResult(constitutionResult);
+
+        if (constitutionResult.isEmpty() && medicineResult.getInteractionResult().isEmpty()) {
+            medicineResult.setTaking(true);
+        } else {
+            medicineResult.setTaking(false);
+        }
 
         return new Result(medicineResult);
     }
@@ -101,6 +117,26 @@ public class PillController {
         return new Result(medicineResult);
     }
 
+    @CrossOrigin
+    @PostMapping("/v3/manual/patient")
+    public Result createManualPatient3(@RequestBody PatientName patientName) throws IOException {
+
+        List<Integer> drugEdiCode = drugService.manualDrugSearch(patientName.getPills());
+        String constitutionResult = drugService.returnDisease2(drugEdiCode, patientName.getConstitution());
+        MedicineResult medicineResult = drugService.returnInteractions(drugEdiCode);
+
+        medicineResult.setConstitutionResult(constitutionResult);
+
+        if (constitutionResult.isEmpty() && medicineResult.getInteractionResult().isEmpty()) {
+            medicineResult.setTaking(true);
+        } else {
+            medicineResult.setTaking(false);
+        }
+
+        return new Result(medicineResult);
+    }
+
+    @CrossOrigin
     @PostMapping("/v1/drug-research")
     public Result drugResearch(@RequestBody ReqDrugName reqDrugName) throws IOException {
         List<String> drugNames = drugService.loadApiDrugSearch(reqDrugName.drugName);

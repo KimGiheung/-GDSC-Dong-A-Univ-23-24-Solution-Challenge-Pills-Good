@@ -112,6 +112,22 @@ class DrugServiceTest {
     }
 
     @Test
+    void returnDiseaseTest2() {
+        List<Integer> drugEdiCode = Arrays.asList(642100410, 641801140, 665507731, 643300600, 643502200);
+        List<String> diseases = Arrays.asList("정상", "심장기능저하", "무좀");
+
+        boolean isContain = drugService.containsDisease("\\t\\\"1) 담도 폐색증 환자\\\", \\\"2) 중증의 간장애 환자, 황달환자\\\"", diseases);
+        System.out.println("isContain" + isContain);
+        String disease = drugService.returnDisease2(drugEdiCode, diseases);
+        System.out.println(disease);
+
+        if (disease.isEmpty()) {
+            System.out.println("정상임");
+        }
+
+    }
+
+    @Test
     void returnInteraction_상호작용수정() throws IOException {
         List<Integer> drugEdiCode = Arrays.asList(642100410, 641801140, 665507731, 643300600, 643502200);
         List<String> diseases = Arrays.asList("환자아님", "심장기능저하", "무좀");

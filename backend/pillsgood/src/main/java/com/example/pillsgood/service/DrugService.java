@@ -45,7 +45,44 @@ public class DrugService {
             }
         }
 
+
+        String constitutionResult = "";
+        for (Drug drug : drugs) {
+            constitutionResult += drug.getItemName() + ", ";
+        }
+        if (!drugs.isEmpty()) {
+            constitutionResult += " : 기저질환으로 인해 복용하면 안됩니다";
+        }
+
         return true;
+    }
+
+    public String returnDisease2(List<Integer> drugEdiCode, List<String> diseases) {
+        List<Drug> drugs = new ArrayList<>();
+        List<String> drugNames = new ArrayList<>();
+
+        for (int code1 = 0; code1 < drugEdiCode.size(); code1++) {
+            drugs.add(drugRepository.findByEdiCode(drugEdiCode.get(code1)));
+            String underlyingDisease = drugs.get(code1).getUnderlyingDisease();
+            boolean isContainDisease = false;
+            if (!underlyingDisease.isEmpty() && !diseases.isEmpty()) {
+                isContainDisease = containsDisease(underlyingDisease, diseases);
+            }
+
+            if (isContainDisease) {
+                drugNames.add(drugs.get(code1).getItemName());
+            }
+        }
+
+
+        String constitutionResult = "";
+        for (String drug : drugNames) {
+            constitutionResult += drug + ", ";
+        }
+        if (!drugNames.isEmpty()) {
+            constitutionResult += " : 기저질환으로 인해 복용하면 안됩니다";
+        }
+        return constitutionResult;
     }
 
     public Interaction returnInteraction(int drugEdiCode1, int drugEdiCode2) throws IOException {
@@ -66,6 +103,7 @@ public class DrugService {
         return interaction;
 
     }
+
     public MedicineResult returnInteractions(List<Integer> drugEdiCode) throws IOException {
         List<Interaction> interactions = new ArrayList<>();
         Set<String> tabooCause = new HashSet<>();
@@ -115,6 +153,23 @@ public class DrugService {
             medicine.setChart(drug.getChart());
             medicine.setStorageMethod(drug.getStorageMethod());
             medicine.setValidTerm(drug.getValidTerm());
+            List<String> effectList = Arrays.asList(drug.getEffect().split(", "));
+            for (int i = 0; i < effectList.size(); i++) {
+                effectList.set(i, effectList.get(i).replace("\"", ""));
+            }
+            medicine.setEffect(effectList);
+
+            List<String> usageList = Arrays.asList(drug.getUsage().split(", "));
+            for (int i = 0; i < usageList.size(); i++) {
+                usageList.set(i, usageList.get(i).replace("\"", ""));
+            }
+            medicine.setUsage(usageList);
+
+            List<String> underlyingDiseases = Arrays.asList(drug.getUnderlyingDisease().split(", "));
+            for (int i = 0; i < underlyingDiseases.size(); i++) {
+                underlyingDiseases.set(i, underlyingDiseases.get(i).replace("\"", ""));
+            }
+            medicine.setUnderlyingDisease(underlyingDiseases);
 
             medicines.add(medicine);
         }
@@ -152,11 +207,14 @@ public class DrugService {
 //    noTaking = True(질병포함됨, 섭취X), False(질병포함X, 섭취가능)
     public boolean containsDisease(String underlyingDisease, List<String> diseases) {
         boolean noTaking = false;
-        for (String disease : diseases) {
-            if (underlyingDisease.contains(disease)) {
-                noTaking = true;
+        if (underlyingDisease != null) {
+            for (String disease : diseases) {
+                if (underlyingDisease.contains(disease)) {
+                    noTaking = true;
+                }
             }
         }
+
         return noTaking;
     }
 
@@ -194,15 +252,51 @@ public class DrugService {
 
     }
 
-    public List<Integer> manualDrugSearch(List<String> itemNames) {
+    public List<Integer> manualDrugSearch(List<String> itemNames) throws IOException {
         List<Integer> drugEdiCode = new ArrayList<>();
+
 
         for (String itemName : itemNames) {
             Drug drug = drugRepository.findByName(itemName);
+            if (drug == null || drug.getChart() == null || drug.getUnderlyingDisease().isEmpty()) {
+                loadApi2(itemName);
+                drug = drugRepository.findByName(itemName);
+            }
+
             drugEdiCode.add(drug.getEdiCode());
         }
-
+        log.info("manualDrugSearch:{}", drugEdiCode);
         return drugEdiCode;
+    }
+
+
+    @Transactional
+    public void loadApi2(String itemName) throws IOException {
+        String apiUrl = "https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService04/getDrugPrdtPrmsnDtlInq03?serviceKey=" + serviceKey +
+                "&pageNo=1&numOfRows=1&type=xml&item_name=" + itemName;
+
+        String pythonScriptPath = "D:/project/gdsc/pillsgoodpy/loadapi.py";
+        // 파이썬 스크립트에 전달할 인수
+        String[] cmd = new String[3];
+        cmd[0] = "python"; // 파이썬 실행 명령
+        cmd[1] = pythonScriptPath; // 파이썬 스크립트 경로
+        cmd[2] = apiUrl; // 파이썬 스크립트에 전달할 인수
+
+        // ProcessBuilder 객체 생성
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+
+        Map<String, String> env = pb.environment();
+        env.put("PYTHONIOENCODING", "UTF-8");
+        // 프로세스 시작
+        Process process = pb.start();
+
+        // 파이썬 스크립트의 출력을 읽기 위한 BufferedReader 객체 생성
+        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String ret;
+        while ((ret = in.readLine()) != null) {
+            System.out.println(ret);
+        }
+
     }
 
     @Transactional
@@ -239,7 +333,6 @@ public class DrugService {
 //            System.out.println(result);
 //        }
 
-        log.info("service:{}", results);
         return results;
     }
 
