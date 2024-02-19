@@ -11,6 +11,7 @@ public class Drug {
     @Column(name = "drug_id")
     private Long id;
 
+    @Column(nullable = true)
     private int ediCode;
     private String itemName;
     private String ingredientCode;

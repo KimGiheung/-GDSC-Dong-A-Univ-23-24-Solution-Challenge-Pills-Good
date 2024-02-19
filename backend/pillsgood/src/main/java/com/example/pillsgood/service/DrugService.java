@@ -1,9 +1,11 @@
 package com.example.pillsgood.service;
 
+import com.example.pillsgood.domain.Disease;
 import com.example.pillsgood.domain.Drug;
 import com.example.pillsgood.domain.Interaction;
 import com.example.pillsgood.dto.Medicine;
 import com.example.pillsgood.dto.MedicineResult;
+import com.example.pillsgood.repository.DiseaseRepository;
 import com.example.pillsgood.repository.DrugRepository;
 import com.example.pillsgood.repository.InteractionRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class DrugService {
 
     private final DrugRepository drugRepository;
     private final InteractionRepository interactionRepository;
+    private final DiseaseRepository diseaseRepository;
 
     @Value("${serviceKey}")
     private String serviceKey;
@@ -83,6 +86,21 @@ public class DrugService {
             constitutionResult += " : 기저질환으로 인해 복용하면 안됩니다";
         }
         return constitutionResult;
+    }
+
+    public List<String> returnDiseaseName(String diseaseName) {
+        List<String> diseaseNames = new ArrayList<>();
+
+        List<Disease> diseases = diseaseRepository.findByName(diseaseName);
+        if (diseases.isEmpty()) {
+            diseaseNames.add(diseaseName);
+        }
+
+        for (Disease disease : diseases) {
+            diseaseNames.add(disease.getDiseaseName());
+        }
+
+        return diseaseNames;
     }
 
     public Interaction returnInteraction(int drugEdiCode1, int drugEdiCode2) throws IOException {

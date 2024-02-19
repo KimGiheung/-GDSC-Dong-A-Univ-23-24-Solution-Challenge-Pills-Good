@@ -1,10 +1,12 @@
 package com.example.pillsgood.controller;
 
+import com.example.pillsgood.domain.Disease;
 import com.example.pillsgood.domain.Drug;
 import com.example.pillsgood.dto.Medicine;
 import com.example.pillsgood.dto.MedicineResult;
 import com.example.pillsgood.dto.Patient;
 import com.example.pillsgood.dto.PatientName;
+import com.example.pillsgood.repository.DiseaseRepository;
 import com.example.pillsgood.service.DrugService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,10 +28,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -145,6 +144,17 @@ public class PillController {
         return new Result(drugNames);
     }
 
+    @CrossOrigin
+    @PostMapping("/v1/disease-research")
+    public Result diseaseResearch(@RequestBody ReqDiseaseName reqDiseaseName) {
+        List<String> diseaseNames = drugService.returnDiseaseName(reqDiseaseName.diseaseName);
+
+        log.info("diseaseNames:{}", diseaseNames);
+        return new Result(diseaseNames);
+    }
+
+
+
 
     @Data
     @NoArgsConstructor
@@ -153,7 +163,12 @@ public class PillController {
         String drugName;
     }
 
-
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class ReqDiseaseName {
+        String diseaseName;
+    }
 
     @PostMapping("/v1/dummy")
     public Result getPillsDummyData(@RequestBody ReqConsPills request) {
