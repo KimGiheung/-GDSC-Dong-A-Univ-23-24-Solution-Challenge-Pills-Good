@@ -1,17 +1,13 @@
 import requests
 import xml.etree.ElementTree as ET
 import sys
-import jaydebeapi
+import pymysql
 import config
 
 def update_or_insert_drug(edi_code, item_name, ingredient_name, entp_name, chart, storage_method, valid_term, effect, dosage, precautions):
     if edi_code is None:
         raise ValueError("EDI_CODE cannot be None")
-    
-    conn = jaydebeapi.connect(config.driver,
-                              config.db_url,
-                              [config.user_name, config.password], 
-                              config.driver_url) 
+    conn = pymysql.connect(host=config.DB_HOST, port=config.DB_PORT, user=config.DB_USERNAME, password=config.DB_PASSWORD, db=config.DB_NAME, charset='utf8') 
 
     try:
         with conn.cursor() as cur:
