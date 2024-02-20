@@ -8,6 +8,7 @@ This project aims to address this by allowing users to register photos of the pi
 
 ## UN-SDGs : Goal 3 (Good Health and Well-Being)
 <img src="https://lh5.googleusercontent.com/nKU-iofce6v0AOD0RMd6LGxMmKx4b93R5y_dhlnna71B1u2DJSxWRrIQWAqdRxThakfqucAVtUPxbmPiLu2p6IITdsuOrc6aVZM--X353iVVE7wkQ_nhr_DEegac22iJ0w=w1280" width="200">
+![image](https://github.com/KimGiheung/-GDSC-Dong-A-Univ-23-24-Solution-Challenge-Pills-Good/assets/94778694/c3d68268-04a2-4100-a5e4-05226878191b)
 
 It is tailored to promote good health and well-being. Specifically, it is a solution aligned with Goal 3.8 of achieving universal health coverage, including accessibility to essential medications and vaccines that are of high quality and affordable. During brainstorming activities within the team, we heard experiences of harm due to medication side effects, and according to research by the Korean team, there is a result indicating that inappropriate medication administration is a factor increasing the risk of death for 54% of individuals aged 66 and above. Additionally, WHO reports that in the United States, this leads to the death of 1.3 million patients annually. In order to prevent such harm, it is urgent to develop a service that provides easily accessible information about medications and their suitability for consumption. This insight serves as the background for this project's development.
 
