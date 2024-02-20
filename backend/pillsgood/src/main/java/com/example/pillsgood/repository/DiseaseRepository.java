@@ -1,7 +1,6 @@
 package com.example.pillsgood.repository;
 
 import com.example.pillsgood.domain.Disease;
-import com.example.pillsgood.domain.Drug;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +13,6 @@ import java.util.List;
 public class DiseaseRepository {
 
     final private EntityManager em;
-
-
-    public void save(Disease disease) {
-        em.persist(disease);
-    }
 
     public List<Disease> findByName(String diseaseName) {
         try {

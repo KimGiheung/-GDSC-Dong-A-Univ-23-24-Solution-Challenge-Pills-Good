@@ -12,6 +12,5 @@ public class MedicineResult {
     private String interactionResult;
     private String constitutionResult;
     private Set<String> tabooCause;
-
     private List<Medicine> medicines;
 }

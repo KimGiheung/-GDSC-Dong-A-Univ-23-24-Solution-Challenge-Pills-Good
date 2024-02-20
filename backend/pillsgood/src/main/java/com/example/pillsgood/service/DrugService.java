@@ -5,6 +5,7 @@ import com.example.pillsgood.domain.Drug;
 import com.example.pillsgood.domain.Interaction;
 import com.example.pillsgood.dto.Medicine;
 import com.example.pillsgood.dto.MedicineResult;
+import com.example.pillsgood.exception.DrugNotFoundException;
 import com.example.pillsgood.repository.DiseaseRepository;
 import com.example.pillsgood.repository.DrugRepository;
 import com.example.pillsgood.repository.InteractionRepository;
@@ -33,34 +34,7 @@ public class DrugService {
     private String serviceKey;
 
 
-    public boolean returnDisease(List<Integer> drugEdiCode, List<String> diseases) {
-        List<Drug> drugs = new ArrayList<>();
-        List<String> drugNames = new ArrayList<>();
-
-        for (int code1 = 0; code1 < drugEdiCode.size(); code1++) {
-            drugs.add(drugRepository.findByEdiCode(drugEdiCode.get(code1)));
-            String underlyingDisease = drugs.get(code1).getUnderlyingDisease();
-
-            boolean isContainDisease = containsDisease(underlyingDisease, diseases);
-            if (isContainDisease) {
-                drugNames.add(drugs.get(code1).getItemName());
-                return false;
-            }
-        }
-
-
-        String constitutionResult = "";
-        for (Drug drug : drugs) {
-            constitutionResult += drug.getItemName() + ", ";
-        }
-        if (!drugs.isEmpty()) {
-            constitutionResult += " : 기저질환으로 인해 복용하면 안됩니다";
-        }
-
-        return true;
-    }
-
-    public String returnDisease2(List<Integer> drugEdiCode, List<String> diseases) {
+    public String getDiseaseResult(List<Integer> drugEdiCode, List<String> diseases) {
         List<Drug> drugs = new ArrayList<>();
         List<String> drugNames = new ArrayList<>();
 
@@ -69,7 +43,7 @@ public class DrugService {
             String underlyingDisease = drugs.get(code1).getUnderlyingDisease();
             boolean isContainDisease = false;
             if (!underlyingDisease.isEmpty() && !diseases.isEmpty()) {
-                isContainDisease = containsDisease(underlyingDisease, diseases);
+                isContainDisease = isDiseaseIncluded(underlyingDisease, diseases);
             }
 
             if (isContainDisease) {
@@ -79,16 +53,23 @@ public class DrugService {
 
 
         String constitutionResult = "";
+        int j = 0;
         for (String drug : drugNames) {
-            constitutionResult += drug + ", ";
+            constitutionResult += drug;
+            if (j < drugNames.size() - 1) {
+                constitutionResult += ", ";
+            }
+            j++;
         }
         if (!drugNames.isEmpty()) {
             constitutionResult += " : 기저질환으로 인해 복용하면 안됩니다";
         }
+
+
         return constitutionResult;
     }
 
-    public List<String> returnDiseaseName(String diseaseName) {
+    public List<String> getRelatedDiseaseNames(String diseaseName) {
         List<String> diseaseNames = new ArrayList<>();
 
         List<Disease> diseases = diseaseRepository.findByName(diseaseName);
@@ -103,16 +84,16 @@ public class DrugService {
         return diseaseNames;
     }
 
-    public Interaction returnInteraction(int drugEdiCode1, int drugEdiCode2) throws IOException {
+    public Interaction getInteraction(int drugEdiCode1, int drugEdiCode2) throws IOException {
         Drug drug1 = drugRepository.findByEdiCode(drugEdiCode1);
         Drug drug2 = drugRepository.findByEdiCode(drugEdiCode2);
 
-        if (drug1 == null || drug1.getChart() == null) {
-            loadApi2(drugEdiCode1);
+        if (drug1 == null || drug1.getChart() == null || drug1.getUnderlyingDisease().isEmpty()) {
+            loadApi(drugEdiCode1);
             drug1 = drugRepository.findByEdiCode(drugEdiCode1);
         }
-        if (drug2 == null || drug2.getChart() == null) {
-            loadApi2(drugEdiCode2);
+        if (drug2 == null || drug2.getChart() == null || drug1.getUnderlyingDisease().isEmpty()) {
+            loadApi(drugEdiCode2);
             drug2 = drugRepository.findByEdiCode(drugEdiCode2);
         }
 
@@ -122,7 +103,7 @@ public class DrugService {
 
     }
 
-    public MedicineResult returnInteractions(List<Integer> drugEdiCode) throws IOException {
+    public MedicineResult getInteractionResult(List<Integer> drugEdiCode) throws IOException {
         List<Interaction> interactions = new ArrayList<>();
         Set<String> tabooCause = new HashSet<>();
         List<Drug> allDrugs = new ArrayList<>();
@@ -134,7 +115,7 @@ public class DrugService {
 
         for (int code1 = 0; code1 < drugEdiCode.size() - 1; code1++) {
             for (int code2 = 1; code2 < drugEdiCode.size(); code2++) {
-                Interaction interaction = returnInteraction(drugEdiCode.get(code1), drugEdiCode.get(code2));
+                Interaction interaction = getInteraction(drugEdiCode.get(code1), drugEdiCode.get(code2));
                 if (interaction != null) {
                     interactions.add(interaction);
                 }
@@ -147,20 +128,21 @@ public class DrugService {
             tabooCause.add(interaction.getTabooCause());
         }
 
-
-
         String interactionResult = "";
+        int j = 0;
         for (Drug drug : drugs) {
-            interactionResult += drug.getItemName() + ", ";
+            interactionResult += drug.getItemName();
+            if (j < drugs.size() - 1) {
+                interactionResult += ", ";
+            }
+            j++;
         }
         if (!drugs.isEmpty()) {
             interactionResult += " : 같이 복용하면 안됩니다";
         }
 
-        // MedicineResult 객체를 생성합니다.
         MedicineResult medicineResult = new MedicineResult();
 
-        // 각 Drug 객체를 Medicine 객체로 변환하고, MedicineResult에 추가합니다.
         List<Medicine> medicines = new ArrayList<>();
         for (Drug drug : allDrugs) {
             Medicine medicine = new Medicine();
@@ -172,6 +154,7 @@ public class DrugService {
             medicine.setStorageMethod(drug.getStorageMethod());
             medicine.setValidTerm(drug.getValidTerm());
             List<String> effectList = Arrays.asList(drug.getEffect().split(", "));
+
             for (int i = 0; i < effectList.size(); i++) {
                 effectList.set(i, effectList.get(i).replace("\"", ""));
             }
@@ -199,31 +182,7 @@ public class DrugService {
         return medicineResult;
     }
 
-    public Set<Drug> returnInteractionsV1(List<Integer> drugEdiCode) throws IOException {
-        List<Interaction> interactions = new ArrayList<>();
-        List<String> tabooCause = new ArrayList<>();
-        Set<Drug> drugs = new HashSet<>();
-
-        for (int code1 = 0; code1 < drugEdiCode.size() - 1; code1++) {
-            for (int code2 = 1; code2 < drugEdiCode.size(); code2++) {
-                Interaction interaction = returnInteraction(drugEdiCode.get(code1), drugEdiCode.get(code2));
-                if (interaction != null) {
-                    interactions.add(interaction);
-                }
-            }
-        }
-
-        for (Interaction interaction : interactions) {
-            drugs.add(interaction.getDrugCode1());
-            drugs.add(interaction.getDrugCode2());
-            tabooCause.add(interaction.getTabooCause());
-        }
-
-        return drugs;
-    }
-
-//    noTaking = True(질병포함됨, 섭취X), False(질병포함X, 섭취가능)
-    public boolean containsDisease(String underlyingDisease, List<String> diseases) {
+    public boolean isDiseaseIncluded(String underlyingDisease, List<String> diseases) {
         boolean noTaking = false;
         if (underlyingDisease != null) {
             for (String disease : diseases) {
@@ -237,39 +196,6 @@ public class DrugService {
     }
 
 
-    @Transactional
-    public void loadApi2(int ediCode) throws IOException {
-        String ediCodeUrl = Integer.toString(ediCode);
-
-        String apiUrl = "https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService04/getDrugPrdtPrmsnDtlInq03?serviceKey=" + serviceKey +
-                "&pageNo=1&numOfRows=1&type=xml&edi_code=" + ediCodeUrl;
-
-        String pythonScriptPath = "D:/project/gdsc/pillsgoodpy/loadapi.py";
-        // 파이썬 스크립트에 전달할 인수
-        String[] cmd = new String[3];
-        cmd[0] = "python"; // 파이썬 실행 명령
-        cmd[1] = pythonScriptPath; // 파이썬 스크립트 경로
-        cmd[2] = apiUrl; // 파이썬 스크립트에 전달할 인수
-
-        // ProcessBuilder 객체 생성
-        ProcessBuilder pb = new ProcessBuilder(cmd);
-
-        Map<String, String> env = pb.environment();
-        env.put("PYTHONIOENCODING", "UTF-8");
-        // 프로세스 시작
-        Process process = pb.start();
-
-        // 파이썬 스크립트의 출력을 읽기 위한 BufferedReader 객체 생성
-        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String ret;
-        while ((ret = in.readLine()) != null) {
-            System.out.println(ret);
-        }
-
-
-
-    }
-
     public List<Integer> manualDrugSearch(List<String> itemNames) throws IOException {
         List<Integer> drugEdiCode = new ArrayList<>();
 
@@ -277,8 +203,11 @@ public class DrugService {
         for (String itemName : itemNames) {
             Drug drug = drugRepository.findByName(itemName);
             if (drug == null || drug.getChart() == null || drug.getUnderlyingDisease().isEmpty()) {
-                loadApi2(itemName);
+                loadApi(itemName);
                 drug = drugRepository.findByName(itemName);
+                if (drug == null) {
+                    throw new DrugNotFoundException("drug's ediCode not found: " + itemName);
+                }
             }
 
             drugEdiCode.add(drug.getEdiCode());
@@ -289,26 +218,50 @@ public class DrugService {
 
 
     @Transactional
-    public void loadApi2(String itemName) throws IOException {
+    public void loadApi(int ediCode) throws IOException {
+        String ediCodeUrl = Integer.toString(ediCode);
+
         String apiUrl = "https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService04/getDrugPrdtPrmsnDtlInq03?serviceKey=" + serviceKey +
-                "&pageNo=1&numOfRows=1&type=xml&item_name=" + itemName;
+                "&pageNo=1&numOfRows=1&type=xml&edi_code=" + ediCodeUrl;
 
         String pythonScriptPath = "D:/project/gdsc/pillsgoodpy/loadapi.py";
-        // 파이썬 스크립트에 전달할 인수
-        String[] cmd = new String[3];
-        cmd[0] = "python"; // 파이썬 실행 명령
-        cmd[1] = pythonScriptPath; // 파이썬 스크립트 경로
-        cmd[2] = apiUrl; // 파이썬 스크립트에 전달할 인수
 
-        // ProcessBuilder 객체 생성
+        String[] cmd = new String[3];
+        cmd[0] = "python";
+        cmd[1] = pythonScriptPath;
+        cmd[2] = apiUrl;
+
         ProcessBuilder pb = new ProcessBuilder(cmd);
 
         Map<String, String> env = pb.environment();
         env.put("PYTHONIOENCODING", "UTF-8");
-        // 프로세스 시작
         Process process = pb.start();
 
-        // 파이썬 스크립트의 출력을 읽기 위한 BufferedReader 객체 생성
+        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String ret;
+        while ((ret = in.readLine()) != null) {
+            System.out.println(ret);
+        }
+    }
+
+    @Transactional
+    public void loadApi(String itemName) throws IOException {
+        String apiUrl = "https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService04/getDrugPrdtPrmsnDtlInq03?serviceKey=" + serviceKey +
+                "&pageNo=1&numOfRows=1&type=xml&item_name=" + itemName;
+
+        String pythonScriptPath = "D:/project/gdsc/pillsgoodpy/loadapi.py";
+
+        String[] cmd = new String[3];
+        cmd[0] = "python";
+        cmd[1] = pythonScriptPath;
+        cmd[2] = apiUrl;
+
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+
+        Map<String, String> env = pb.environment();
+        env.put("PYTHONIOENCODING", "UTF-8");
+        Process process = pb.start();
+
         BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String ret;
         while ((ret = in.readLine()) != null) {
@@ -323,34 +276,25 @@ public class DrugService {
                 "&pageNo=1&numOfRows=6&type=xml&item_name=" + itemName;
 
         String pythonScriptPath = "D:/project/gdsc/pillsgoodpy/drug_search.py";
-        // 파이썬 스크립트에 전달할 인수
-        String[] cmd = new String[3];
-        cmd[0] = "python"; // 파이썬 실행 명령
-        cmd[1] = pythonScriptPath; // 파이썬 스크립트 경로
-        cmd[2] = apiUrl; // 파이썬 스크립트에 전달할 인수
 
-        // ProcessBuilder 객체 생성
+        String[] cmd = new String[3];
+        cmd[0] = "python";
+        cmd[1] = pythonScriptPath;
+        cmd[2] = apiUrl;
+
         ProcessBuilder pb = new ProcessBuilder(cmd);
 
         Map<String, String> env = pb.environment();
         env.put("PYTHONIOENCODING", "UTF-8");
-        // 프로세스 시작
         Process process = pb.start();
 
-        // 파이썬 스크립트의 출력을 읽기 위한 BufferedReader 객체 생성
         BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String ret;
 
-        List<String> results = new ArrayList<>(); // 결과를 저장할 ArrayList 생성
+        List<String> results = new ArrayList<>();
         while ((ret = in.readLine()) != null) {
-            results.add(ret); // 각 줄을 ArrayList에 추가
+            results.add(ret);
         }
-
-//        // 결과 출력
-//        for (String result : results) {
-//            System.out.println(result);
-//        }
-
         return results;
     }
 

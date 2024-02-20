@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class Interaction {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "interaction_id")
