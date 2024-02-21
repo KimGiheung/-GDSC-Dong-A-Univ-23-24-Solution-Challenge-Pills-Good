@@ -32,6 +32,7 @@ public class PillController {
         MedicineResult medicineResult = drugService.getInteractionResult(patient.getPills());
 
         medicineResult.setConstitutionResult(constitutionResult);
+        log.info("status:{}, drug:{}", constitutionResult, medicineResult.getInteractionResult());
 
         if (constitutionResult.isEmpty() && medicineResult.getInteractionResult().isEmpty()) {
             medicineResult.setTaking(true);
@@ -40,11 +41,10 @@ public class PillController {
         }
 
         if (constitutionResult.isEmpty()) {
-            medicineResult.setTaking(true);
             medicineResult.setConstitutionResult("복용해도 됩니다");
+
         }
         if (medicineResult.getInteractionResult().isEmpty()) {
-            medicineResult.setTaking(true);
             medicineResult.setInteractionResult("같이 복용해도 됩니다");
         }
 
@@ -69,11 +69,9 @@ public class PillController {
             }
 
             if (constitutionResult.isEmpty()) {
-                medicineResult.setTaking(true);
                 medicineResult.setConstitutionResult("복용해도 됩니다");
             }
             if (medicineResult.getInteractionResult().isEmpty()) {
-                medicineResult.setTaking(true);
                 medicineResult.setInteractionResult("같이 복용해도 됩니다");
             }
 
