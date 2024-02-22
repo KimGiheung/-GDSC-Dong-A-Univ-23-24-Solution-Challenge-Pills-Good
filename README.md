@@ -28,6 +28,9 @@ It is tailored to promote good health and well-being. Specifically, it is a solu
 - Flutter
 - Firebase
 
+### 3. How To Run
+- 
+
 ## Backend
 
 ### 1. Tech Stack
