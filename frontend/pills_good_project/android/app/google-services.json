@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "732885620876",
+    "project_id": "pills-good",
+    "storage_bucket": "pills-good.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732885620876:android:6cb51095ce96237a6a43a9",
+        "android_client_info": {
+          "package_name": "com.example.pills_good_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbJaJEBdFQ5cV7MxD0IxgW-dCZvITkQYI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
