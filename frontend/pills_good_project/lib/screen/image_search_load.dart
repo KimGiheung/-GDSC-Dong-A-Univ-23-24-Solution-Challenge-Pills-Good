@@ -47,6 +47,7 @@ class ImageSearchLoad extends StatelessWidget {
           MaterialPageRoute(builder: (context) => ImageSearchCheck()), // NextPage는 다음 화면의 위젯입니다.
         );
       },
+
       child: Column(
         children: [
           Container(

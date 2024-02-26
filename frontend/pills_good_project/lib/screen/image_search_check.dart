@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:pills_good_project/screen/manual_search_disease.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:pills_good_project/screen/auto_search_disease.dart';
+
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+//import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+//import 'package:carousel_slider/carousel_slider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,7 +47,47 @@ class _ImageSearchCheckState extends State<ImageSearchCheck> {
   bool _isClicked2 = false; // 버튼의 클릭 상태를 추적하는 변수
   bool _isClicked2_X = false; // 버튼의 클릭 상태를 추적하는 변수
 
-  // Firebase Storage에서 member.json 파일을 불러오는 함수
+  int activeIndex = 0; // 현재 활성화된 이미지의 인덱스를 추적합니다.
+
+  final List<String> images = [
+    'assets/레보록신정.png',
+    'assets/명인할로페리돌정1.5밀리그램.png',
+    //'assets/pill.png',
+    // 추가 이미지 경로를 여기에 넣으세요.
+  ];
+
+  // 이미지에 따라 변경될 텍스트 배열
+  final List<String> imageTexts = [
+    '레보록신정',
+    '명인할로페리돌정',
+    // 각 이미지에 해당하는 텍스트를 여기에 넣으세요.
+  ];
+
+  Widget imageSlider(String path, int index) => Container(
+    width: double.infinity,
+    height: 240,
+    color: Colors.grey,
+    child: Image.asset(path, fit: BoxFit.cover),
+  );
+
+  Widget indicator() => Container(
+    margin: const EdgeInsets.only(bottom: 20.0),
+    alignment: Alignment.bottomCenter,
+    child: AnimatedSmoothIndicator(
+      activeIndex: activeIndex,
+      count: images.length,
+      effect: JumpingDotEffect(
+          dotHeight: 6,
+          dotWidth: 6,
+          activeDotColor: Colors.orange,
+          dotColor: Colors.white.withOpacity(0.6)),
+    ),
+  );
+
+
+
+  // Firebase Storage에서 member.json 파일을 불러오는 함수  (되는건데 임시로만 주석처리)
+  /*
   Future<void> loadMemberJson() async {
     try {
       final storageRef = FirebaseStorage.instance.ref();
@@ -56,16 +105,77 @@ class _ImageSearchCheckState extends State<ImageSearchCheck> {
     }
   }
 
+   */
+  Future<void> listFiles() async {
+    await Firebase.initializeApp();
+    final storageRef = FirebaseStorage.instance.ref().child('Ai_input_img');
+    final result = await storageRef.listAll();
+
+    // 파일 목록을 날짜순으로 정렬
+    var files = result.items;
+    // 파일 메타데이터를 사용하여 정렬을 구현해야 함
+    // 예: 파일 이름 또는 메타데이터에 날짜 정보가 포함되어 있다고 가정
+  }
+
+
+  Future<void> displayLatestFile(String filePath) async {
+    // 파일 다운로드 URL 가져오기
+    final downloadURL = await FirebaseStorage.instance.ref(filePath).getDownloadURL();
+
+    // 이 URL을 사용하여 Flutter 앱에서 이미지나 데이터를 표시
+    // 예: Image.network(downloadURL) 를 사용하여 이미지 표시
+  }
+
+  Future<void> downloadAndDisplayImage() async {
+    final imagePath = 'Ai_output/latestImage.png'; // 최신 이미지 파일 경로
+    await displayLatestFile(imagePath);
+  }
+
+  Future<void> downloadAndDisplayJson() async {
+    final jsonPath = 'Ai_output/latestData.json'; // 최신 JSON 파일 경로
+    // JSON 파일 다운로드 및 파싱 로직 구현
+  }
+
+  //파이어베이스 스토리지 -> 이미지 가져오기 (테스트 안해봤지만 일단 주석
+  /*
+  Future<Image> loadImageFromFirebaseStorage() async {
+    try {
+      // Firebase Storage 인스턴스와 참조 설정
+      final storageRef = FirebaseStorage.instance.ref();
+      final imageRef = storageRef.child('AI_output/K-001027_0_0_0_2_90_040_200.png'); // 이미지 경로 수정 필요
+
+      // 이미지 파일의 URL 가져오기
+      final String url = await imageRef.getDownloadURL();
+
+      // 이미지 URL을 사용하여 Image 위젯 생성
+      return Image.network(url);
+    } catch (e) {
+      // 오류 발생 시 콘솔에 출력하고 기본 이미지 반환
+      print('Error loading image: $e');
+      return Image.asset('assets/kk.png'); // 기본 이미지 경로 수정 필요
+    }
+  }*/
+
+
+  //파이어베이스에서 url 가져오기
   @override
   void initState() {
     super.initState();
-    loadMemberJson();
+    //getLatestFileMetadata();
+    //loadLatestFile();
+    //loadMemberJson();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
+    //return Scaffold(
+     //   appBar: AppBar(
+       //   title: Text('Image Slider with Indicator'),
+        //),
+    return Scaffold(
+        body: Material(
+        child: Column(
+        children: [
         Container(
           width: 380,
           height: 825,
@@ -88,6 +198,7 @@ class _ImageSearchCheckState extends State<ImageSearchCheck> {
                   ),
                 ),
               ),
+
               Positioned(
                 left: 63,
                 top: 66,
@@ -101,19 +212,42 @@ class _ImageSearchCheckState extends State<ImageSearchCheck> {
                   ),
                 ),
               ),
+
+
+              //사진 들어가는 부분
               Positioned(
                 left: 56,
                 top: 113,
                 child: Container(
                   width: 268,
                   height: 160,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("./assets/Rifampin2.png"),
-                    ),
+                  child: Stack(
+                    alignment:Alignment.bottomCenter,
+                    children: <Widget>[
+                      CarouselSlider.builder(
+                          options: CarouselOptions(
+                            height: 160, //슬라이더의 높이 조정
+                            initialPage: 0,
+                            viewportFraction: 1,
+                            enlargeCenterPage: true,
+                            onPageChanged: (index,reason)=>setState((){
+                              activeIndex=index;
+                            }),
+                          ),
+                      itemCount: images.length,
+                      itemBuilder: (context, index, realIndex){
+                            final path=images[index];
+                            return imageSlider(path, index);
+                      },
+                      ),
+                      indicator(),
+                    ],
                   ),
+
                 ),
               ),
+
+
               Positioned(
                 left: 64,
                 top: 93,
@@ -140,7 +274,7 @@ class _ImageSearchCheckState extends State<ImageSearchCheck> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ManualSearchDisease(selectedPill: '타이레놀정500mg' ?? ''),
+                        builder: (context) => AutoSearchDisease(selectedPill: '레보록신정 , 명인할로페리돌정' ?? ''),
                         //builder: (context) => ImageSearchDisease(selectedPill: selectedPill ?? ''),
                       ),
                     );
@@ -162,6 +296,7 @@ class _ImageSearchCheckState extends State<ImageSearchCheck> {
                   child: Text('제출하기'),
                 ),
               ),
+
               ///////////////////////////////
               ///선택박스
               Positioned(
@@ -196,290 +331,44 @@ class _ImageSearchCheckState extends State<ImageSearchCheck> {
                         ),
                       ),////////
 
-                  Positioned(
-                    left: 172,
-                    top: 11,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isClicked = !_isClicked; // 탭할 때마다 상태를 반전시킵니다.
-                        });
-                      },
-                      child: Opacity(
-                        opacity: 1.00,
-                        child: Container(
-                          width: 35,
-                          height: 35,
-                          decoration: ShapeDecoration(
-                            color: _isClicked ? Color(0xFFFFCB13) : Color(0xFFFFE292), // 클릭 상태에 따라 색상 변경 Color(0xFFFFE292)
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(11),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              "O", // 컨테이너 내부에 "O" 텍스트 표시
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-
-                      Positioned(
-                        left: 214,
-                        top: 11,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isClicked_X = !_isClicked_X; // 탭할 때마다 상태를 반전시킵니다.
-                            });
-                          },
-                          child: Opacity(
-                            opacity: 1.00,
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              decoration: ShapeDecoration(
-                                color: _isClicked_X ? Color(0xFFFF4C39) : Color(0x50FF4C39), // 클릭 상태에 따라 색상 변경 Color(0xFFFFE292)
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(11),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "X", // 컨테이너 내부에 "O" 텍스트 표시
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
                       Positioned(
                         left: 34,
                         top: 18,
                         child: Text(
-                          '리팜핀정',
+                          // 현재 활성화된 이미지 인덱스에 맞는 텍스트를 표시합니다.
+                          imageTexts[activeIndex],
                           style: TextStyle(
                             color: Color(0xFF3F3F3F),
                             fontSize: 15,
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
-                            height: 0,
                           ),
                         ),
                       ),
-
-                    ],
-                  ),
-                ),
-              ),
-
-
-              ///선택박스
-              Positioned(
-                left: 56,
-                top: 384,
-                child: Container(
-                  width: 268,
-                  height: 57,
-                  child: Stack(
-                    children: [
-
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: Container(
-                          width: 268,
-                          height: 57,
-                          decoration: ShapeDecoration(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(21),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: Color(0x7F000000),
-                                blurRadius: 4,
-                                offset: Offset(0, 0),
-                                spreadRadius: 0,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),////////
-
-                      Positioned(
-                        left: 172,
-                        top: 11,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isClicked2 = !_isClicked2; // 탭할 때마다 상태를 반전시킵니다.
-                            });
-                          },
-                          child: Opacity(
-                            opacity: 1.00,
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              decoration: ShapeDecoration(
-                                color: _isClicked2 ? Color(0xFFFFCB13) : Color(0xFFFFE292), // 클릭 상태에 따라 색상 변경 Color(0xFFFFE292)
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(11),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "O", // 컨테이너 내부에 "O" 텍스트 표시
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-
-                      Positioned(
-                        left: 214,
-                        top: 11,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isClicked2_X = !_isClicked2_X; // 탭할 때마다 상태를 반전시킵니다.
-                            });
-                          },
-                          child: Opacity(
-                            opacity: 1.00,
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              decoration: ShapeDecoration(
-                                color: _isClicked2_X ? Color(0xFFFF4C39) : Color(0x50FF4C39), // 클릭 상태에 따라 색상 변경 Color(0xFFFFE292)
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(11),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "X", // 컨테이너 내부에 "O" 텍스트 표시
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      Positioned(
-                        left: 34,
-                        top: 18,
-                        child: Text(
-                          '니페딕스지속정',
-                          style: TextStyle(
-                            color: Color(0xFF3F3F3F),
-                            fontSize: 15,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            height: 0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-
-              Positioned(
-                left: 252,
-                top: 125,
-                child: Container(
-                  width: 48,
-                  height: 21,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: Container(
-                          width: 48,
-                          height: 21,
-                          decoration: ShapeDecoration(
-                            color: Color(0xBF6B6A6A),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 14,
-                        top: 2,
-                        child: Text(
-                          '1/2',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            height: 0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-/////////////////////////////////////////////////////////
-              Positioned(
-                left: 177,
-                top: 283,
-                child: Container(
-                  width: 48,
-                  height: 21,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: Container(
-                          width: 7,
-                          height: 7,
-                          decoration: ShapeDecoration(
-                            color: Color(0xFFFF4C39),
-                            shape: OvalBorder(),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 15,
-                        top: 0,
-                        child: Container(
-                          width: 7,
-                          height: 7,
-                          decoration: ShapeDecoration(
-                            color: Color(0xFF9B9999),
-                            shape: OvalBorder(),
-                          ),
-                        ),
-                      ),
-
                     ],
                   ),
                 ),
               ),
 
             ],
+
+            /*
           ),
         ),
-      ],
+    ],
+        ),
+        ],
     );
+  }
+}
+*/
+          ),
+        ),
+        ],
+        ),
+        ),
+    );
+
   }
 }
 

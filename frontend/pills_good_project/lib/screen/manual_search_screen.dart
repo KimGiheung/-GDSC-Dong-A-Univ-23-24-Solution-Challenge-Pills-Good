@@ -51,7 +51,7 @@ class _ManualSearchScreenState extends State<ManualSearchScreen> {
 
   void makePostRequest() async {
     var headers = {'Content-Type': 'application/json'};
-    var request = http.Request('POST', Uri.parse('https://ab94-124-51-164-190.ngrok-free.app/api/v1/drug-research'));
+    var request = http.Request('POST', Uri.parse('https://73f1-124-51-164-190.ngrok-free.app/api/v1/drug-research'));
     request.body = json.encode({
       "drugName": _controller.text
     });
@@ -94,7 +94,9 @@ class _ManualSearchScreenState extends State<ManualSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Scaffold(
+        body: Material(
+      child: Column(
       children: [
         Container(
           width: 380,
@@ -385,7 +387,7 @@ class _ManualSearchScreenState extends State<ManualSearchScreen> {
               left:77,
               top:498,
 
-              child: Container(
+              child: selectedPill != null ? Container(
                 width: 219,
                 height: 28,
                 child: Stack(
@@ -409,7 +411,7 @@ class _ManualSearchScreenState extends State<ManualSearchScreen> {
                       left: 19,
                       top: 4,
                       child: Container(
-                        width: 156,
+                        width: 175,
                         height: 20,
                         child: Stack(
                           children: [
@@ -419,14 +421,14 @@ class _ManualSearchScreenState extends State<ManualSearchScreen> {
                               child: Container(
                                 width: 156,
                                 height: 20,
-                                decoration: BoxDecoration(color: Color(0xFF80C847)),
+                                decoration: BoxDecoration(color: Color(0xFFFFFFFF)),
                               ),
                             ),
                             Positioned(
-                              left: 45,
+                              left: 5,
                               top: 3,
                               child: SizedBox(
-                                width: 63,
+                                width: 170,
                                 height: 14,
                                 child: Text(selectedPill ?? ' ',
                                   textAlign: TextAlign.center,
@@ -466,13 +468,13 @@ class _ManualSearchScreenState extends State<ManualSearchScreen> {
                             ),
                             Positioned(
                               left: 5,
-                              top: 2,
+                              top: 3,
                               child: Text(
                                 'x',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w400,
                                   height: 0,
@@ -485,13 +487,15 @@ class _ManualSearchScreenState extends State<ManualSearchScreen> {
                     ),
                   ],
                 ),
-              ),
+              ) : SizedBox.shrink(),
 
-    ),
+              ),
             ],
           ),
         ),
       ],
+      ),
+    ),
     );
   }
 }

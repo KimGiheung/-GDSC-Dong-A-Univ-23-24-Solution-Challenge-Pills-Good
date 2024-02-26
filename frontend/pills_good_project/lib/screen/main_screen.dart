@@ -128,7 +128,7 @@ class MainScreen extends StatelessWidget {
 
               Positioned(
                 left: 47,
-                top: 389,
+                top: 277,
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -146,9 +146,10 @@ class MainScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
               Positioned(
                 left: 47,
-                top: 555,
+                top: 428,
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -165,6 +166,71 @@ class MainScreen extends StatelessWidget {
                         fit: BoxFit.fill),
                   ),
                 ),
+              ),
+
+              Positioned(
+                left:56,
+                top:581,
+                child:Container(
+                  width: 268,
+                  height: 116,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: Container(
+                          width: 268,
+                          height: 116,
+                          decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(width: 3, color: Color(0xFFFFE292)),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0x3F000000),
+                                blurRadius: 2,
+                                offset: Offset(2, 2),
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 40,
+                        top: 27,
+                        child: Text(
+                          '큰 글씨로 보기',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 33,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            height: 0,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 52,
+                        top: 66,
+                        child: Text(
+                          '시력에 어려움이 있다면?',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 17,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
               ),
             ],
           ),
