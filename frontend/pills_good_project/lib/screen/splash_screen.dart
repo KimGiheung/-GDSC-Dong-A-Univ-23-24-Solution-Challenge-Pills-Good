@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'package:p3/widget/bottom_bar.dart';
 
 import 'package:pills_good_project/screen/main_screen.dart';
-
-//import 'package:pills_good/screen/main_screen.dart'
-//import 'package:pils/screen/main_screen.dart';
-//import 'package:p3/screen/find_screen.dart';
-//import 'package:p3/screen/search_screen.dart';
-//import 'package:p3/screen/mypage_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
