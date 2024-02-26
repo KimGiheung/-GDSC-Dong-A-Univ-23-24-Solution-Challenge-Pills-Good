@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-import 'package:pills_good_project/screen/auto_result_page_false.dart';
+import 'package:pills_good_project/screen/result_page2.dart';
 
 void main() {
   runApp(const FigmaToCodeApp());
@@ -21,8 +20,7 @@ class FigmaToCodeApp extends StatelessWidget {
       home: Scaffold(
         body: Material(
           child: AutoSearchDisease(selectedPill: '약_기본값'),
-          //child: ManualSearchDisease(selectedPill: '약_기본값', selectedDisease: '기저질환_기본값'),
-          //child: ManualSearchDisease(),
+
         ),
       ),
     );
@@ -398,26 +396,6 @@ class _AutoSearchDiseaseState extends State<AutoSearchDisease> {
                   ),
                 ),
 
-                /*
-              Positioned(
-                left: 95,
-                top: 213,
-                child: Container(
-                  width: 180,
-                  height: 100,
-                  child: Text(
-                    ' ${widget.selectedPill}', // 올바르게 표시될 것입니다.
-                    textAlign: TextAlign.center, // 텍스트를 가운데 정렬합니다.
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16, // fontSize를 조정합니다.
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),*/
-
 
                 Positioned(
                   left: 56,
@@ -517,8 +495,7 @@ class _AutoSearchDiseaseState extends State<AutoSearchDisease> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AutoResultPageFalse(selectedDisease: selectedDisease ?? '', selectedPill: widget.selectedPill??'레보록신정(레보플록사신)(수출명:UniloxinTabs , 명인할로페리돌정1.5밀리그램'),
-                          //builder: (context) => ResultPage2(selectedPill: widget.selectedPill ?? "타이레놀",selectedDisease: selectedDisease ?? ''),
+                          builder: (context) => ResultPage2(selectedPill: widget.selectedPill ?? "타이레놀",selectedDisease: selectedDisease ?? ''),
                         ),
                       );
                     },
