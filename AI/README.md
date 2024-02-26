@@ -39,6 +39,7 @@ Following feature extraction, scikit-learn's k-NN algorithm is applied for class
 ## result
 
 An AI-based pill identification system recognizes oral medications from images with high accuracy, demonstrating the effectiveness of the integrated CNN and k-NN approach. System performance is evaluated using various metrics, including precision, recall, and F1 score, across test datasets representing a variety of oral medications. Detailed statistical data related to model evaluation has been completed in AI_v6.ipynb.
+![Uploading image.png…]()
 
 ## Argument
 
