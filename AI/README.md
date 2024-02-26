@@ -10,6 +10,8 @@
 
 Inappropriate medication administration is a significant health problem worldwide, resulting in significant morbidity and mortality. This project develops an AI-based system to identify oral medications through image recognition, with the goal of mitigating risks associated with polypharmacy and adverse drug reactions. Leveraging advanced machine learning algorithms and image processing techniques, this system provides an approach to improve drug safety and patient care.
 
+
+
 ## introduction
 
 Medication errors and adverse drug reactions pose serious problems to healthcare systems around the world. The complexity of drug interactions and difficulties in pill identification increase the risk of inappropriate drug use. This project introduces an AI-based solution designed to recognize oral medications from user-uploaded images, leveraging OpenCV for image preprocessing and combining TensorFlow's ResNet-50 and scikit-learn's k-NN for pill classification. Utilize a hybrid model.
