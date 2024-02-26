@@ -297,7 +297,7 @@ class _ImageSearchCheckState extends State<ImageSearchCheck> {
                 ),
               ),
 
-              ///////////////////////////////
+
               ///선택박스
               Positioned(
                 left: 56,
