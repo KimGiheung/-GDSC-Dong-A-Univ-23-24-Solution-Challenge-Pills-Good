@@ -52,6 +52,6 @@ It is tailored to promote good health and well-being. Specifically, it is a solu
 # Member
 Gi-heung Kim                     | Jiwoo Jeong    | Heesu Jeong | Jihye Bea |
 |------------------------|------------|-------------|---------------|
-| - Lead <br/> - AI&Data | - App | - Backend  | - UI/UX          |
+| - Lead <br/> - AI&Data | - Frontend | - Backend  | - UI/UX          |
 
 
