@@ -5,7 +5,8 @@ A new Flutter project.
 ## Getting Started
 
 This project is a starting point for a Flutter application.
-![https://docs.flutter.dev/get-started/codelab](https://github.com/KimGiheung/-GDSC-Dong-A-Univ-23-24-Solution-Challenge-Pills-Good/edit/main/frontend/pills_good_project/pill's good ppt-08)  
+![https://docs.flutter.dev/get-started/codelab](frontend/pills_good_project/pill's good ppt-13.png)  
+
 ![https://docs.flutter.dev/get-started/codelab](https://github.com/KimGiheung/-GDSC-Dong-A-Univ-23-24-Solution-Challenge-Pills-Good/edit/main/frontend/pills_good_project/pill's good ppt-09)  
 ![https://docs.flutter.dev/get-started/codelab](https://github.com/KimGiheung/-GDSC-Dong-A-Univ-23-24-Solution-Challenge-Pills-Good/edit/main/frontend/pills_good_project/pill's good ppt-10)  
 ![https://docs.flutter.dev/get-started/codelab](https://github.com/KimGiheung/-GDSC-Dong-A-Univ-23-24-Solution-Challenge-Pills-Good/edit/main/frontend/pills_good_project/pill's good ppt-11)  
