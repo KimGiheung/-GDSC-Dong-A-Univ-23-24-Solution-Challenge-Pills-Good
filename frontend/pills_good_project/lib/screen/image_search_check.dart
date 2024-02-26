@@ -42,10 +42,7 @@ class ImageSearchCheck extends StatefulWidget {
 }
 
 class _ImageSearchCheckState extends State<ImageSearchCheck> {
-  bool _isClicked = false; // 버튼의 클릭 상태를 추적하는 변수
-  bool _isClicked_X = false; // 버튼의 클릭 상태를 추적하는 변수
-  bool _isClicked2 = false; // 버튼의 클릭 상태를 추적하는 변수
-  bool _isClicked2_X = false; // 버튼의 클릭 상태를 추적하는 변수
+
 
   int activeIndex = 0; // 현재 활성화된 이미지의 인덱스를 추적합니다.
 
