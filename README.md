@@ -21,13 +21,21 @@ It is tailored to promote good health and well-being. Specifically, it is a solu
 - Tenserflow
 - Firebase
 
-## App
+## Frontend
 ### 1. Tech Stack
 
 - Dart
 - Flutter
 - Firebase
 
+### 2. caution
+- This app was created to fit the size of 380*825.
+
+### 3. How To Run
+1. install android studio
+2. In android studio, Click the Open button in the Projects tab and select pills_good_project
+3. select Emluator and Clic run button(or Shift + F10)
+   
 ## Backend
 
 ### 1. Tech Stack
