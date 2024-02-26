@@ -20,4 +20,3 @@ blob.download_to_filename('local_photo.jpg')
 
 print('Downloaded storage object {} from bucket {} to local file {}.'.format(
     blob_name, bucket_name, 'local_photo.jpg'))
-s
