@@ -16,7 +16,6 @@ class Storage{
       //Ai_input_img
       // Once the file upload is complete, get the download URL
       final downloadURL = await storage.ref('Ai_input_img/$fileName').getDownloadURL();
-
       return downloadURL;
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'

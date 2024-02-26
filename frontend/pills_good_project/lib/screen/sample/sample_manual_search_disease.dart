@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pills_good_project/screen/manual_search_disease.dart';
-import 'package:pills_good_project/screen/result_page.dart';
+import 'package:pills_good_project/screen/result_page2.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -151,7 +151,7 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ResultPage(selectedDisease: selectedDisease ?? '', selectedPill: widget.selectedPill),
+                    builder: (context) => ResultPage2(selectedDisease: selectedDisease ?? '', selectedPill: widget.selectedPill),
                     //builder: (context) => ResultPage(selectedValue: selectedValue, di_edi_code: 642100410),
                   ),
                 );

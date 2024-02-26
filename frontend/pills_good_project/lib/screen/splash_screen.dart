@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: Color(0xFFFF4C39),
       child: Center(
         child: Image.asset('./assets/splash.png'), // 스플래시 이미지. 경로에 맞게 변경해주세요.
       ),

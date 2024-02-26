@@ -1,18 +1,123 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:pills_good_project/screen/result_page.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('Drug Research App')),
-        body: Material(
-          child: ImageSearchDisease(),
-        ),
+      home: ImageSearchDisease(),
+    );
+  }
+}
+
+class ImageSearchDisease extends StatefulWidget {
+
+  @override
+  _ImageSearchDiseaseState createState() => _ImageSearchDiseaseState();
+
+}
+
+class _ImageSearchDiseaseState extends State<ImageSearchDisease> {
+  String _imageUrl = '';
+  String _jsonData = '';
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    fetchLatestFiles();
+  }
+
+  Future<void> fetchLatestFiles() async {
+    final storageRef = FirebaseStorage.instance.ref().child('/Ai_input_img');
+    final result = await storageRef.listAll();
+
+    // 파일 이름이나 메타데이터로 정렬 필요 (여기서는 단순화를 위해 첫 번째 파일 사용)
+    Reference? latestImageRef;
+    Reference? latestJsonRef;
+
+    try {
+      latestImageRef = result.items.firstWhere((ref) => ref.name.endsWith('.png'));
+    } catch (e) {
+      // firstWhere에서 아이템을 찾지 못했을 때 처리
+    }
+
+    try {
+      latestJsonRef = result.items.firstWhere((ref) => ref.name.endsWith('.json'));
+    } catch (e) {
+      // firstWhere에서 아이템을 찾지 못했을 때 처리
+    }
+
+    if (latestImageRef != null) {
+      final imageUrl = await latestImageRef.getDownloadURL();
+      setState(() {
+        _imageUrl = imageUrl;
+      });
+    }
+
+    if (latestJsonRef != null) {
+      final jsonUrl = await latestJsonRef.getDownloadURL();
+      final response = await http.get(Uri.parse(jsonUrl));
+      if (response.statusCode == 200) {
+        setState(() {
+          _jsonData = response.body;
+        });
+      }
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Firebase Storage Files'),
       ),
+      body: Column(
+        children: <Widget>[
+          _imageUrl.isNotEmpty
+              ? Image.network(_imageUrl)
+              : Container(height: 200, child: Center(child: Text('No Image Found'))),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Text(_jsonData.isNotEmpty ? jsonEncode(jsonDecode(_jsonData)) : 'No Data Found'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+/*
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: ImageSearchDisease(),
     );
   }
 }
@@ -26,124 +131,68 @@ class ImageSearchDisease extends StatefulWidget {
 
 
 class _ImageSearchDiseaseState extends State<ImageSearchDisease> {
-  final _controller = TextEditingController();
-  String _result = ''; // 결과를 저장할 변수
-  List<String> _resultList = [];  // 여기를 수정했습니다.
-  late String selectedValue; // 클래스 변수로 selectedValue 선언
-
-
-  //List<String> _resultList;
+  String _imageUrl = '';
+  String _jsonData = '';
 
   @override
   void initState() {
     super.initState();
-    _resultList = _result.split('\n');
+    fetchLatestFiles();
   }
 
-  void makePostRequest() async {
-    var headers = {'Content-Type': 'application/json'};
-    var request = http.Request('POST', Uri.parse('https://ab94-124-51-164-190.ngrok-free.app/api/v1/disease-research'));
-    request.body = json.encode({
-      "diseaseName": _controller.text
-    });
-    request.headers.addAll(headers);
 
-    try {
-      http.StreamedResponse response = await request.send();
+  Future<void> fetchLatestFiles() async {
+    final storageRef = FirebaseStorage.instance.ref().child('Ai_output');
+    final result = await storageRef.listAll();
 
-      if (response.statusCode == 200) {
-        String responseString = await response.stream.bytesToString();
-        print('Response String: $responseString'); // 서버 응답 출력
-        Map<String, dynamic> responseJson = jsonDecode(responseString);
+    // 단순화를 위해 첫 번째 파일을 사용 (실제로는 파일 이름이나 메타데이터로 정렬 필요)
+    if (result.items.isNotEmpty) {
+      final latestImageRef = result.items.firstWhere((ref) => ref.name.endsWith('.png'), orElse: () => null);
+      final latestJsonRef = result.items.firstWhere((ref) => ref.name.endsWith('.json'), orElse: () => null);
 
-        if (responseJson.containsKey('data')) {
-          List<dynamic> data = responseJson['data'];
-          setState(() {
-            _result = data.join('\n');
-            _resultList = _result.split('\n'); // 여기에서 초기화
-          });
-        } else {
-          print('The key "data" does not exist in the response'); // data 키가 없는 경우 출력
-        }
-      } else {
+      if (latestImageRef != null) {
+        final imageUrl = await latestImageRef.getDownloadURL();
         setState(() {
-          _result = 'Error: ${response.reasonPhrase}';
+          _imageUrl = imageUrl;
         });
       }
-    } catch (e) {
-      print('Exception occured: $e'); // 예외 발생 시 출력
+
+      if (latestJsonRef != null) {
+        final jsonUrl = await latestJsonRef.getDownloadURL();
+        final response = await http.get(Uri.parse(jsonUrl));
+        if (response.statusCode == 200) {
+          setState(() {
+            _jsonData = response.body;
+          });
+        }
+      }
     }
   }
 
-
-
-  void printDataValues(String jsonString) {
-    Map<String, dynamic> jsonData = jsonDecode(jsonString);
-    List<dynamic> dataValues = jsonData['data'];
-
-    for (var value in dataValues) {
-      print(value);
-    }
-  }
 
 
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Firebase Storage Files'),
+      ),
+      body: Column(
         children: <Widget>[
-          Material(
-            child: TextField(
-              controller: _controller,
-              decoration: InputDecoration(labelText: 'Enter drug name'),
+          _imageUrl.isNotEmpty
+              ? Image.network(_imageUrl)
+              : Container(height: 200, child: Center(child: Text('No Image Found'))),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Text(_jsonData.isNotEmpty ? jsonEncode(jsonDecode(_jsonData)) : 'No Data Found'),
             ),
           ),
-          ElevatedButton(
-            child: Text('Search'),
-            onPressed: makePostRequest,
-          ),
-          //Text(_result), // _result를 화면에 표시
-          Container(
-            height: 300, // 적절한 높이 값을 설정하세요.
-            child: ListView.builder(
-              itemCount: _resultList.length,
-              itemBuilder: (context, index) {
-                return TextButton(
-                  child: Text(_resultList[index]),
-                  onPressed: () {
-                   // String selectedValue = _resultList[index];
-                    selectedValue = _resultList[index]; // 클래스 변수 업데이트
-
-                    print('선택된 값: $selectedValue');
-                  },
-                );
-              },
-            ),
-          ),
-
-          ElevatedButton(
-
-            child: Text('submit'),
-            onPressed: makePostRequest,
-          ),
-
-          ElevatedButton(
-              child: Text('알약은 임시데이터로 전송'),
-              onPressed: ()  {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ResultPage(selectedDisease: selectedValue, selectedPill: "642100410"),
-                  ),
-                );
-
-
-              }),
-
         ],
       ),
     );
   }
 }
+
+
+ */

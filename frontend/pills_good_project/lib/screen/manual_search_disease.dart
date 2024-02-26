@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pills_good_project/screen/manual_search_disease.dart';
-import 'package:pills_good_project/screen/result_page.dart';
+//import 'package:pills_good_project/screen/result_page.dart';
 import 'package:pills_good_project/screen/result_page2.dart';
 
 void main() {
@@ -59,7 +59,7 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
 
   void makePostRequest() async {
     var headers = {'Content-Type': 'application/json'};
-    var request = http.Request('POST', Uri.parse('https://ab94-124-51-164-190.ngrok-free.app/api/v1/disease-research'));
+    var request = http.Request('POST', Uri.parse('https://73f1-124-51-164-190.ngrok-free.app/api/v1/disease-research'));
     request.body = json.encode({
       "diseaseName": _controller.text
     });
@@ -99,7 +99,8 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView( // 스크롤 가능하도록 변경
+    return Scaffold(
+        body: Material(
       child:Column(
       children: [
         Container(
@@ -310,39 +311,6 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
                 ),
               ),
 
-
-              Positioned(
-                left: 64,
-                top: 678,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // 버튼 클릭 시 실행될 함수
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ResultPage(selectedDisease: selectedDisease ?? '', selectedPill: widget.selectedPill),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xFFFF4C39), // 버튼 배경색
-                    onPrimary: Color(0xFFFFFAEE), // 버튼 텍스트 색상
-                    textStyle: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w600,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(21), // 버튼 모서리 둥글기
-                    ),
-                    minimumSize: Size(252, 42), // 버튼 크기
-                    elevation: 4, // 버튼 그림자
-                  ),
-                  child: Text('제출하기'),
-                ),
-              ),
-
-
               //제출하기
 
 
@@ -414,6 +382,27 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
               ),
 
               Positioned(
+                left: 85,
+                top: 210,
+                child: Container(
+                  width: 220,
+                  height: 100,
+                  child: Text(
+                    //'${widget.selectedPill.split(RegExp(r',|\(')).join('\n')}',
+                    '${widget.selectedPill.split(',').join('\n')}', // 쉼표를 기준으로 분리하고, 각 분리된 문자열을 개행 문자로 연결합니다.
+                    textAlign: TextAlign.center, // 텍스트를 가운데 정렬합니다.
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12, // fontSize를 조정합니다.
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+
+              /*
+              Positioned(
                 left: 95,
                 top: 213,
                 child: Container(
@@ -430,7 +419,7 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
                     ),
                   ),
                 ),
-              ),
+              ),*/
 
 
               Positioned(
@@ -513,7 +502,7 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
                     textAlign: TextAlign.center, // 텍스트를 가운데 정렬합니다.
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 16, // fontSize를 조정합니다.
+                      fontSize: 14, // fontSize를 조정합니다.
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w400,
                     ),
@@ -524,14 +513,15 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
 //테스트 화면
               Positioned(
                 left: 64,
-                top: 628,
+                top: 673,
                 child: ElevatedButton(
                   onPressed: () {
                     // 버튼 클릭 시 실행될 함수
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ResultPage2(selectedPill: selectedPill ?? '',selectedDisease: selectedDisease ?? ''),
+                        builder: (context) => ResultPage2(selectedDisease: selectedDisease ?? '', selectedPill: widget.selectedPill??'레보록신정(레보플록사신)(수출명:UniloxinTabs , 명인할로페리돌정1.5밀리그램'),
+                        //builder: (context) => ResultPage2(selectedPill: widget.selectedPill ?? "타이레놀",selectedDisease: selectedDisease ?? ''),
                       ),
                     );
                   },
@@ -549,7 +539,7 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
                     minimumSize: Size(252, 42), // 버튼 크기
                     elevation: 4, // 버튼 그림자
                   ),
-                  child: Text('제출하기2'),
+                  child: Text('제출하기'),
                 ),
               ),
             ],
@@ -557,6 +547,7 @@ class _ManualSearchDiseaseState extends State<ManualSearchDisease> {
         ),
       ],
       ),
+        ),
     );
   }
 }
