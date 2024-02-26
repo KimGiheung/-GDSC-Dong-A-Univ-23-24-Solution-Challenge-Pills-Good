@@ -34,7 +34,7 @@ class ResultPageTrue extends StatefulWidget {
 
 class _ResultPageTrueState extends State<ResultPageTrue> {
 
-  File? _image; /////
+  File? _image;
   final _controller = TextEditingController();
   String _result = '';
   bool _isTaking = false;
@@ -69,10 +69,6 @@ class _ResultPageTrueState extends State<ResultPageTrue> {
     };
     var request = http.Request('POST', Uri.parse('https://73f1-124-51-164-190.ngrok-free.app/api/v3/manual/patient'));
     request.body = json.encode({
-      /*
-      "constitution":[],
-      "pills":[642100410, 646900720]
-*/
       "constitution":[widget.selectedDisease],
       "pills": [widget.selectedPill],
     });
@@ -327,94 +323,6 @@ class _ResultPageTrueState extends State<ResultPageTrue> {
                 ),
               ),
 
-              //알약 이름
-              /*
-              Positioned(
-                left: 120,
-                top: 197,
-                child: Container(
-                  width: 200, // 원하는 너비 지정
-                  height: 500, // 원하는 높이 지정
-                  child: Text(
-                    widget.selectedPill == null
-                        ? "선택된 알약이 없습니다"
-                        : widget.selectedPill!.split(RegExp(r',|\( ')).join('\n'), // 여기에서 직접 처리
-                    style: TextStyle(
-                      color: Color(0xFF3F3F3F),
-                      fontSize: 12,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w700,
-                      height: 1.5, // 텍스트 라인 간격 조정
-                    ),
-                    overflow: TextOverflow.ellipsis, // 텍스트가 영역을 넘어갈 경우 처리
-                    softWrap: true, // 텍스트가 영역에 맞게 줄바꿈 되도록 설정
-                  ),
-                ),
-              ),*/
-
-              Positioned(
-                left: 128,
-                top: 195,
-                child: Container(
-                  width: 200, // 원하는 너비 지정
-                  height: 500, // 원하는 높이 지정
-                  child: Text(
-                  '타이레놀정500밀리그람', // 여기에서 직접 처리
-                    style: TextStyle(
-                      color: Color(0xFF3F3F3F),
-                      fontSize: 12,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w700,
-                      height: 1.5, // 텍스트 라인 간격 조정
-                    ),
-                    overflow: TextOverflow.ellipsis, // 텍스트가 영역을 넘어갈 경우 처리
-                    softWrap: true, // 텍스트가 영역에 맞게 줄바꿈 되도록 설정
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 139,
-                top: 211,
-                child: Container(
-                  width: 200, // 원하는 너비 지정
-                  height: 500, // 원하는 높이 지정
-                  child: Text(
-                    '(아세트아미노펜)', // 여기에서 직접 처리
-                    style: TextStyle(
-                      color: Color(0xFF3F3F3F),
-                      fontSize: 12,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w700,
-                      height: 1.5, // 텍스트 라인 간격 조정
-                    ),
-                    overflow: TextOverflow.ellipsis, // 텍스트가 영역을 넘어갈 경우 처리
-                    softWrap: true, // 텍스트가 영역에 맞게 줄바꿈 되도록 설정
-                  ),
-                ),
-              ),
-
-              Positioned(
-                left: 88,
-                top: 226,
-                child: Container(
-                  width: 200, // 원하는 너비 지정
-                  height: 500, // 원하는 높이 지정
-                  child: Text(
-                    '(수출명:TylenolExtraStrengthCaplets)', // 여기에서 직접 처리
-                    style: TextStyle(
-                      color: Color(0xFF3F3F3F),
-                      fontSize: 12,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w700,
-                      height: 1.5, // 텍스트 라인 간격 조정
-                    ),
-                    overflow: TextOverflow.ellipsis, // 텍스트가 영역을 넘어갈 경우 처리
-                    softWrap: true, // 텍스트가 영역에 맞게 줄바꿈 되도록 설정
-                  ),
-                ),
-              ),
-
-              /*
               Positioned(
                 left: 158,
                 top: 197,
@@ -422,10 +330,7 @@ class _ResultPageTrueState extends State<ResultPageTrue> {
                   widget.selectedPill == null
                       ? "선택된 알약이 없습니다"
                       : widget.selectedPill!.split(RegExp(r',|\( ')).join('\n'), // 여기에서 직접 처리
-                  //formatPillText(widget.selectedPill), // 수정된 부분
-                  //'${widget.selectedPill?? "선택된 알약이 없습니다"}',
                   style: TextStyle(
-
                     color: Color(0xFF3F3F3F),
                     fontSize: 12,
                     fontFamily: 'Pretendard',
@@ -433,7 +338,7 @@ class _ResultPageTrueState extends State<ResultPageTrue> {
                     height: 0.0,
                   ),
                 ),
-              ),*/
+              ),
 
               //알약 아이콘
               Positioned(
@@ -451,7 +356,6 @@ class _ResultPageTrueState extends State<ResultPageTrue> {
 
 
               //약
-
               Positioned(
                 left: 128,
                 top: 296,
@@ -470,9 +374,6 @@ class _ResultPageTrueState extends State<ResultPageTrue> {
               //나의 기저질환
               ...conditionallyRenderedWidgets,
 
-              _image == null
-                  ? Container()
-                  : Image.file(_image!), // 선택한 이미지를 화면에 표시합니다.
 
 
 //title 글
@@ -513,56 +414,3 @@ class _ResultPageTrueState extends State<ResultPageTrue> {
     );
   }
 }
-
-/*
-import 'package:flutter/material.dart';
-
-class ResultPageTrue extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('결과 페이지'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.check_circle_outline,
-              size: 100,
-              color: Colors.green,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '약과 질병이 호환됩니다!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '약을 안전하게 복용하실 수 있습니다.',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // 사용자가 다른 페이지로 돌아갈 수 있도록 Navigator를 사용합니다.
-                Navigator.pop(context);
-              },
-              child: Text('돌아가기'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/

@@ -61,10 +61,7 @@ class _ResultPageFalseState extends State<ResultPageFalse> {
     };
     var request = http.Request('POST', Uri.parse('https://73f1-124-51-164-190.ngrok-free.app/api/v3/manual/patient'));
     request.body = json.encode({
-      /*
-      "constitution":[],
-      "pills":[642100410, 646900720]
-*/
+
       "constitution":[widget.selectedDisease],
       "pills": [widget.selectedPill],
     });
@@ -338,12 +335,7 @@ class _ResultPageFalseState extends State<ResultPageFalse> {
                 ),
               ),
 
-
-
-
               //기저질환 - 복용가능 여부
-
-
 
               Positioned(
                 left: 128,
@@ -361,13 +353,8 @@ class _ResultPageFalseState extends State<ResultPageFalse> {
                 ),
               ),
 
-
               //나의 기저질환
               ...conditionallyRenderedWidgets,
-
-              _image == null
-                  ? Container()
-                  : Image.file(_image!), // 선택한 이미지를 화면에 표시합니다.
 
 
 //title 글
@@ -407,60 +394,3 @@ class _ResultPageFalseState extends State<ResultPageFalse> {
 
   }
 }
-
-
-
-///////////////////////////////////////////////////////
-//sample code
-/*
-import 'package:flutter/material.dart';
-
-class ResultPageFalse extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('결과 페이지'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.error_outline,
-              size: 100,
-              color: Colors.red,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '약과 질병이 호환되지 않습니다!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '이 약을 복용하기 전에 전문가와 상의하십시오.',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // 사용자가 다른 페이지로 돌아갈 수 있도록 Navigator를 사용합니다.
-                Navigator.pop(context);
-              },
-              child: Text('돌아가기'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/
