@@ -1,4 +1,4 @@
-# AI-based pill identification system
+# AI-based pill identification system.
 ##How to run
 1. Download the data from the following link. https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=576
 2. Refer to the comments in ai_maain.py, train.py, and preprocessing.py and adjust them to your environment.
@@ -9,8 +9,6 @@
 ## abstract
 
 Inappropriate medication administration is a significant health problem worldwide, resulting in significant morbidity and mortality. This project develops an AI-based system to identify oral medications through image recognition, with the goal of mitigating risks associated with polypharmacy and adverse drug reactions. Leveraging advanced machine learning algorithms and image processing techniques, this system provides an approach to improve drug safety and patient care.
-
-
 
 ## introduction
 
