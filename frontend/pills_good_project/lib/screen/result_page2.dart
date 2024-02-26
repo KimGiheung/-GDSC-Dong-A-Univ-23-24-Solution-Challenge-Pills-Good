@@ -46,45 +46,17 @@ class _ResultPage2State extends State<ResultPage2> {
   void initState() {
     super.initState();
     //makePostRequest();
-    fetchApiData();
+
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     makePostRequest();
-    fetchApiData();
+
   }
 
-/*
-  void makePostRequest() async {
-    var headers = {'Content-Type': 'application/json'};
-    var request = http.Request('POST', Uri.parse('https://73f1-124-51-164-190.ngrok-free.app/api/v3/manual/patient'));
-    request.body = json.encode({
-      "constitution": [widget.selectedDisease],
-      "pills": [widget.selectedPill],
-    });
-    request.headers.addAll(headers);
 
-    try {
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        String responseString = await response.stream.bytesToString();
-        final responseJson = json.decode(responseString);
-        if (responseJson['data'] != null && responseJson['data']['taking'] != null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            navigateBasedOnResult(responseJson['data']['taking']);
-          });
-        }
-      } else {
-        print(response.reasonPhrase);
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-*/
 
   void makePostRequest() async {
     var headers = {
@@ -120,12 +92,6 @@ class _ResultPage2State extends State<ResultPage2> {
   }
 
 
-  void fetchApiData() async {
-    //final result = await yourApiCall(widget.selectedPill, widget.selectedDisease); // API 호출
-
-    //navigateBasedOnResult(result.taking); // 결과에 따른 페이지 전환 함수
-    //navigateBasedOnResult(_isTaking);
-  }
 
   void navigateBasedOnResult(bool isTaking) {
     if (isTaking) {
